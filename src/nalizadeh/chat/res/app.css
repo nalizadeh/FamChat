@@ -1,0 +1,615 @@
+body, html {
+	width: 100%;
+    height: 100%;
+	margin:0;
+	padding:0;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 14px;
+	color: #666;
+}
+
+*, *:before, *:after {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+table {
+	padding: 0;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+.panel {
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+/*------ header --------*/
+
+.panel header {
+    height: 40px;
+	width: 100%;
+    background-image: url(img/bg.jpg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+	font: 13px/22px "Segoe UI Semilight","Segoe UI","Segoe",Tahoma,Helvetica,Arial,sans-serif;
+	color: #fff;
+	border-bottom: 1px solid #ccc;
+}
+
+.panel header .title { float: left; text-align: left; padding: 6px 0  0 10px; }
+.panel header .h2 { font-weight: 300; font-size: 24px; letter-spacing: 6px; }
+.panel header .h3 { padding-top: 10px; font-weight: 300; font-size: 18px; letter-spacing: 4px; }
+
+.userAvatar {
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	display: inline-block;
+	float: right;
+	margin: 6px 8px 0 0;
+}
+
+#usernameSp {
+	display: inline-block;
+	float: right;
+	font-weight: bold;
+	font-size: 18px;
+	color: #fff;
+	margin: 6px 10px 0 0;
+}
+
+#settingBt {
+	display: none;
+	float: right;
+	width: 16px;
+	height: 16px;
+    overflow: hidden;
+	margin: 11px 10px 0 0;
+    background: url(img/menu16.png) no-repeat top left;
+    cursor: pointer;
+}
+
+#logoutBt {
+	display: none;
+	float: right;
+	width: 16px;
+	height: 16px;
+    overflow: hidden;
+	margin: 11px 10px 0 0;
+    background: url(img/logout16.png) no-repeat top left;
+    cursor: pointer;
+}
+
+#refreshBt {
+	display: inline-block;
+	float: right;
+	width: 16px;
+	height: 16px;
+    overflow: hidden;
+	margin: 11px 10px 0 0;
+    background: url(img/refresh16.png) no-repeat top left;
+    cursor: pointer;
+}
+
+/*----- main ---------*/
+
+.panel main {
+	flex: 1;
+	background: #fff;
+}
+
+.panel main .content {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: row;
+}
+
+.panel main .content .channels {
+	width: 0px;
+	height: 100%;
+	position: relative;
+	border-right: 1px solid #ccc;
+    transition: all 0.3s ease-out;
+   -webkit-transition: all 0.3s ease-out;
+   -moz-transition: all 0.3s ease-out;
+   -o-transition: all 0.3s ease-out;
+}
+
+.panel main .content .channels .channels_cont {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.channels_cont img { border-radius: 50%; }
+.channels_cont ul { list-style-type: none; padding: 0px; margin: 0; }
+.channels_cont h3 { font: bold 14px Helvetica, Verdana, sans-serif; }
+.channels_cont li { padding: 4px; overflow: auto; }
+.channels_cont li td { text-align: left; }
+.channels_cont li .avaImgTd { width: 50px; }
+.channels_cont li:hover { background: #eee; cursor: pointer; }
+.channels_cont .lisp2 { color: #ccc; }
+
+.panel main .content .chats {
+	flex: 1;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.panel main .content .chats .chats_cont {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.panel main .content .chats .chats_cont .channelName {
+	width: 100%;
+	height: 36px;
+	background: #fff;
+	border-bottom: 1px solid #ccc;
+	font-size: 16px;
+}
+
+#channelDv {
+	display: inline-block;
+	font-weight: bold;
+	margin-left: 8px;
+}
+
+#channelSp {
+	display: inline-block;
+	margin-top: 6px;
+}
+
+.channelAv {
+	width: 30px;
+	height: 30px;
+	display: inline-block;
+	margin: 2px 6px 0 8px;
+	border-radius: 50%;
+}
+
+#closeChannelBt {
+	width: 24px;
+	height: 24px;
+	float: right;
+	margin: 6px 10px 0 0;
+}
+
+.panel main .content .chats .chats_cont .chatItems {
+	flex: 1;
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+
+.panel main .content .chats .chats_cont .chatItems .chatItems_cont {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+    background-image: url(img/bg.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.chattdTo {
+	text-align: left;
+	vertical-align: top;
+}
+
+.chattdFrom {
+	text-align: left;
+}
+
+.chatInfo {
+	font-size: 11px;
+}
+
+.chatspanTo {
+	display: inline-block;
+	float: left;
+	margin: 10px 10px 0 10px;
+	padding: 5px;
+	color: #fff;
+	background: #65AADD;
+    border-radius: .5em;
+}
+
+.chatimgTo {
+	display: inline-block;
+}
+
+.chatspanFrom {
+	display: inline-block;
+	float: right;
+	margin: 10px 10px 0 10px;
+	padding: 5px;
+	color: #000;
+	background: #bdd6a3;
+    border-radius: .5em;
+}
+
+.chatimgFrom {
+	display: inline-block;
+	float: right;
+	border-radius: .5em;
+}
+
+.chatBt {
+	cursor: pointer;
+}
+
+.chatImage {
+	border-radius: .5em;
+}
+
+/*------ footer --------*/
+
+.panel footer {
+	height: 81px;
+	background: #eee;
+	border-top: 1px solid #ccc;
+}
+
+.panel footer .controls {
+	height: 60px;
+	padding: 4px;
+	display: flex;
+	flex-direction: row;
+}
+
+.panel footer .copyright {
+	height: 20px;
+	padding: 1px 0 0 5px;
+	border-top: 1px solid #ccc;
+	font-size: 12px;
+}
+
+#chatControls {
+	visibility: hidden;
+}
+
+#channelsBt {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+    overflow: hidden;
+    position: relative;
+	margin: 10px 5px 0 0;
+    background: url(img/menu.png) no-repeat top left;
+    cursor: pointer;
+}
+
+#attachBt {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+    overflow: hidden;
+    position: relative;
+	margin: 10px 5px 0 0;
+    background: url(img/attach.png) no-repeat top left;
+    cursor: pointer;
+	pointer-events: none;
+}
+
+#attachBt [type=file] {
+    display: block;
+    filter: alpha(opacity=0);
+    min-height: 100%;
+    min-width: 100%;
+    opacity: 0;
+    position: absolute;
+    text-align: right;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+
+#smileBt {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+    overflow: hidden;
+    position: relative;
+	margin: 10px 5px 0 0;
+    background: url(img/smiley.png) no-repeat top left;
+    cursor: pointer;
+	pointer-events: none;
+}
+
+#sendBt {
+	display: inline-block;
+	width: 32px;
+	height: 32px;
+    overflow: hidden;
+    position: relative;
+	margin: 10px 0 0 0;
+    background: url(img/send.png) no-repeat top left;
+    cursor: pointer;
+	pointer-events: none;
+}
+
+#chatText {
+	flex: 1;
+	height: 52px;
+	width: 100%;
+	margin-right: 5px;
+	padding: 4px;
+	background: #FFF;
+	overflow-y: auto;
+	line-height: 16px;
+}
+
+#chatloading {
+	display: none;
+	cursor: wait;
+}
+
+/*--- smileys ---*/
+
+#smiles_div { display: none; }
+
+.smiles {
+	position: absolute;
+	left: 16px;
+	top: 100px;
+	width: 280px;
+	height: 172px;
+	display: inline;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 14px;
+	color: #666;
+	border: 1px solid #DDD;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+	z-index: 1000;
+}
+
+.smiles_header {
+	height: 32px;
+	font-size: 16px;
+	background: #F4F4F2;
+	position: relative;
+	padding: 6px;
+	border-bottom: 1px solid #DDD;
+	font-weight: bold;
+}
+
+.smiles_body {
+	position: absolute;
+	width: 100%;
+	height: 140px;
+	overflow-y: auto;
+}
+
+.smiles_table {
+	width: 100%;
+	background: #ffffff;
+}
+
+#smileCloseBtn {
+	width: 24px;
+	height: 24px;
+	float: right;
+}
+
+.smileImg {
+	padding: 4px;
+}
+
+.smileImg:hover {
+	background: #78ff53;
+	cursor: pointer;
+}
+
+/*--- login ---*/
+
+#login_div { display: none; }
+#login_signup_box { display: none; }
+#login_box { display: none; }
+#signup_box { display: none; }
+#sendmail_box { display: none; }
+
+.login {
+	position: absolute;
+	left: 16px;
+	top: 100px;
+	display: inline;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 14px;
+	color: #666;
+	border: 1px solid #DDD;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+	z-index: 1000;
+}
+
+.login_table {
+	width: 280px;
+	background: #ffffff;
+}
+
+.login_header {
+	font-size: 16px;
+	text-transform: uppercase;
+	background: #F4F4F2;
+	position: relative;
+	padding: 10px 10px;
+	border-bottom: 1px solid #DDD;
+	font-weight: bold;
+}
+
+.spa {
+	display: block;
+	padding-bottom: 5px;
+}
+
+.spa_red {
+	color: #ED6347;
+	text-decoration: none;
+}
+
+.inp {
+	width: 98%;
+	height: 28px;
+	border: 1px solid #ccc;
+	padding-left: 4px;
+}
+
+.btn_td {
+	text-align: center;
+}
+
+.btn {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 14px;
+	padding: 10px 20px;
+	background: #F4F4F2;
+	border: 0px solid #ccc;
+	width: 45%;
+	cursor: pointer;
+}
+
+.btn_red {
+	background: #ED6347;
+	color: #FFF;
+}
+
+.btn:hover {
+	background: #E4E4E2;
+}
+
+/*----- setting -------*/
+
+#setting_div { display: none; }
+#setting_box { display: none; }
+#user_box { display: none; }
+#contacts_box { display: none; }
+#groups_box { display: none; }
+
+.setting {
+	position: absolute;
+	left: 16px;
+	top: 100px;
+	display: inline;
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 14px;
+	color: #666;
+	z-index: 1000;
+	border: 1px solid #DDD;
+	box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+	z-index: 1000;
+}
+
+.setting_header {
+	font-size: 16px;
+	text-transform: uppercase;
+	background: #F4F4F2;
+	position: relative;
+	padding: 10px 10px;
+	border-bottom: 1px solid #DDD;
+	font-weight: bold;
+}
+
+.setting_table {
+	width: 280px;
+	background: #ffffff;
+}
+
+.space_td {
+	height: 10px;
+}
+
+.sspa {
+	display: block;
+	padding-bottom: 2px;
+}
+
+.ssel {
+	width: 180px;
+	height: 28px;
+	border: 1px solid #ccc;
+	padding-left: 4px;
+}
+
+.sinp {
+	width: 270px;
+	height: 24px;
+	border: 1px solid #ccc;
+	padding-left: 4px;
+}
+
+.sinpg {
+	width: 180px;
+}
+
+.sbtn {
+	font-family: 'Source Sans Pro', sans-serif;
+	font-size: 14px;
+	text-align: center;
+	background: #F4F4F2;
+	border: 0px solid #ccc;
+	width: 80px;
+	height: 32px;
+	cursor: pointer;
+}
+
+.sbtn:hover {
+	background-color: #eee;
+}
+
+.sbtn_red {
+	background: #ED6347;
+	color: #FFF;
+}
+
+#btnCloseSettings {
+	width: 24px;
+	height: 24px;
+	float: right;
+}
+
+#n_avatar {
+	width: 230px;
+}
+
+#avatarBt {
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+    overflow: hidden;
+    position: relative;
+    background: url(img/gavat.png) no-repeat top left;
+    cursor: pointer;
+}
+
+#avatarBt [type=file] {
+    display: block;
+    filter: alpha(opacity=0);
+    min-height: 100%;
+    min-width: 100%;
+    opacity: 0;
+    position: absolute;
+    text-align: right;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+
+#members {
+	height: 50px;
+}
