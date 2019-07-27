@@ -21,8 +21,6 @@
 
 package nalizadeh.chat;
 
-import nalizadeh.chat.Logger.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.Closeable;
@@ -84,6 +82,9 @@ import java.util.zip.GZIPOutputStream;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
+
+import nalizadeh.chat.util.Logger;
+import nalizadeh.chat.util.Logger.LoggerFactory;
 
 /**
  * The {@code HTTPServer} class implements a light-weight HTTP server.
@@ -497,12 +498,11 @@ public class HTTPServer {
 	 * Stops this server. If it is already stopped, does nothing. Note that if an {@link
 	 * #setExecutor Executor} was set, it must be closed separately.
 	 */
-	public synchronized void stop() {
-		try {
-			if (socket != null) {
-				socket.close();
-			}
-		} catch (IOException ignore) {
+	public synchronized void stop() throws IOException {
+		if (socket != null) {
+			socket.close();
+			socket = null;
+			LOG(null, "HTTPServer is stopped.", null);
 		}
 		socket = null;
 	}

@@ -1,1 +1,1 @@
-# FamChat
+ FamChat is a small but powerfull browser chat app. 
