@@ -2,6 +2,9 @@
 
 package nalizadeh.chat;
 
+import nalizadeh.chat.util.Logger;
+import nalizadeh.chat.util.Logger.LoggerFactory;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -49,9 +52,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 
-import nalizadeh.chat.util.Logger;
-import nalizadeh.chat.util.Logger.LoggerFactory;
-
 /**
  * Author: nalizadeh.org
  */
@@ -70,7 +70,7 @@ public class ChatServer extends WebSocketServer {
 
 	private static String SEPERATOR = "||";
 	private static String SEPERATUG = ";";
-	
+
 	private static String ADMIN = "admin";
 
 	private Map<String, WebSocket> conns = new HashMap<String, WebSocket>();
@@ -87,7 +87,7 @@ public class ChatServer extends WebSocketServer {
 	String fileChannel;
 	String fileName;
 	boolean fileIsAvatar;
-	
+
 	FamChat famchat;
 
 	/**
@@ -253,7 +253,7 @@ public class ChatServer extends WebSocketServer {
 		setConnectionLostTimeout(0);
 		setConnectionLostTimeout(100);
 	}
-	
+
 	@Override
 	public void onStop() {
 		log.trace("Chat server is stopped.");
@@ -335,10 +335,7 @@ public class ChatServer extends WebSocketServer {
 
 		User user = findUser(name);
 		if (user != null) {
-			if (
-				cookieUsed
-				|| PasswordUtils.verifyUserPassword(password, user.password, user.salt)
-			) {
+			if (cookieUsed || PasswordUtils.verifyUserPassword(password, user.password, user.salt)) {
 				conns.put(name, conn);
 
 				try {
@@ -347,12 +344,13 @@ public class ChatServer extends WebSocketServer {
 					return new Response(RESPONSE_TYPES.ERROR, ex.getMessage(), null, null);
 				}
 
-				return new Response(
-					RESPONSE_TYPES.OK,
-					"User is successfully logged in.",
-					user,
-					new Notify(this, name, null, RESPONSE_TYPES.USER_LOGIN)
-				);
+				return
+					new Response(
+						RESPONSE_TYPES.OK,
+						"User is successfully logged in.",
+						user,
+						new Notify(this, name, null, RESPONSE_TYPES.USER_LOGIN)
+					);
 			}
 			return new Response(RESPONSE_TYPES.ERROR, "Invalid password!", null, null);
 		}
@@ -372,12 +370,13 @@ public class ChatServer extends WebSocketServer {
 			User user = findUser(name);
 			user.status = "0";
 
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"User is successfully logged out.",
-				user,
-				new Notify(this, name, null, RESPONSE_TYPES.USER_LOGOUT)
-			);
+			return
+				new Response(
+					RESPONSE_TYPES.OK,
+					"User is successfully logged out.",
+					user,
+					new Notify(this, name, null, RESPONSE_TYPES.USER_LOGOUT)
+				);
 		}
 		return new Response(RESPONSE_TYPES.ERROR, "Invalid user!", null, null);
 	}
@@ -433,9 +432,9 @@ public class ChatServer extends WebSocketServer {
 	 */
 	private Response getUser(String name) {
 		User user = findUser(name);
-		return user != null
-		? new Response(RESPONSE_TYPES.OK, "The user was readed successfully.", user, null)
-		: new Response(RESPONSE_TYPES.ERROR, "The user was not found.", null, null);
+		return
+			user != null ? new Response(RESPONSE_TYPES.OK, "The user was readed successfully.", user, null)
+			: new Response(RESPONSE_TYPES.ERROR, "The user was not found.", null, null);
 	}
 
 	/**
@@ -448,20 +447,13 @@ public class ChatServer extends WebSocketServer {
 	 *
 	 * @throws  IOException
 	 */
-	private Response createUser(String name, String password, String email, String avatar)
-		throws IOException
-	{
+	private Response createUser(String name, String password, String email, String avatar) throws IOException {
 		User user = findUser(name);
 		if (user == null) {
 			user = new User(name, password, null, email, avatar, null, null, "", "0");
 			users.add(user);
 			writeUsers();
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The user was created successfully.",
-				user,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The user was created successfully.", user, null);
 		}
 		return new Response(RESPONSE_TYPES.ERROR, "The user already exists.", null, null);
 	}
@@ -495,13 +487,14 @@ public class ChatServer extends WebSocketServer {
 			writeUsers();
 		}
 
-		return user != null
-		? new Response(
-			RESPONSE_TYPES.OK,
-			"The user was updated successfully.",
-			user,
-			new Notify(this, name, null, RESPONSE_TYPES.USER_UPDATED)
-		) : new Response(RESPONSE_TYPES.ERROR, "The user could not be updated.", null, null);
+		return
+			user != null
+			? new Response(
+				RESPONSE_TYPES.OK,
+				"The user was updated successfully.",
+				user,
+				new Notify(this, name, null, RESPONSE_TYPES.USER_UPDATED)
+			) : new Response(RESPONSE_TYPES.ERROR, "The user could not be updated.", null, null);
 	}
 
 	/**
@@ -520,9 +513,9 @@ public class ChatServer extends WebSocketServer {
 			removeUserChats(name);
 			writeUsers();
 		}
-		return user != null
-		? new Response(RESPONSE_TYPES.OK, "The user was deleted successfully.", user, null)
-		: new Response(RESPONSE_TYPES.ERROR, "The user could not be found.", null, null);
+		return
+			user != null ? new Response(RESPONSE_TYPES.OK, "The user was deleted successfully.", user, null)
+			: new Response(RESPONSE_TYPES.ERROR, "The user could not be found.", null, null);
 	}
 
 	/**
@@ -543,12 +536,7 @@ public class ChatServer extends WebSocketServer {
 				}
 			}
 		}
-		return new Response(
-			RESPONSE_TYPES.OK,
-			"Contacts were loaded successfully.",
-			contacts,
-			null
-		);
+		return new Response(RESPONSE_TYPES.OK, "Contacts were loaded successfully.", contacts, null);
 	}
 
 	/**
@@ -564,19 +552,9 @@ public class ChatServer extends WebSocketServer {
 		if (user != null && !user.contacts.contains(contact)) {
 			user.contacts.add(contact);
 			writeUsers();
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The contact was added to the user successfully.",
-				user,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The contact was added to the user successfully.", user, null);
 		}
-		return new Response(
-			RESPONSE_TYPES.ERROR,
-			"The contact could not be added to the user.",
-			null,
-			null
-		);
+		return new Response(RESPONSE_TYPES.ERROR, "The contact could not be added to the user.", null, null);
 	}
 
 	/**
@@ -592,20 +570,10 @@ public class ChatServer extends WebSocketServer {
 		if (user != null && user.contacts.contains(contact)) {
 			user.contacts.remove(contact);
 			writeUsers();
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The contact was removed from the user successfully.",
-				user,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The contact was removed from the user successfully.", user, null);
 		}
 
-		return new Response(
-			RESPONSE_TYPES.ERROR,
-			"The contact could not be removed from the user.",
-			null,
-			null
-		);
+		return new Response(RESPONSE_TYPES.ERROR, "The contact could not be removed from the user.", null, null);
 	}
 
 	/**
@@ -649,20 +617,10 @@ public class ChatServer extends WebSocketServer {
 		if (user != null && !user.groups.contains(group)) {
 			user.groups.add(group);
 			writeUsers();
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The group was added to the user successfully.",
-				user,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The group was added to the user successfully.", user, null);
 		}
 
-		return new Response(
-			RESPONSE_TYPES.ERROR,
-			"The group could not be added to the user.",
-			null,
-			null
-		);
+		return new Response(RESPONSE_TYPES.ERROR, "The group could not be added to the user.", null, null);
 	}
 
 	/**
@@ -678,20 +636,10 @@ public class ChatServer extends WebSocketServer {
 		if (user != null && user.groups.contains(group)) {
 			user.groups.remove(group);
 			writeUsers();
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The group was removed from the user successfully.",
-				user,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The group was removed from the user successfully.", user, null);
 		}
 
-		return new Response(
-			RESPONSE_TYPES.ERROR,
-			"The group could not be removed from the user.",
-			null,
-			null
-		);
+		return new Response(RESPONSE_TYPES.ERROR, "The group could not be removed from the user.", null, null);
 	}
 
 	/**
@@ -791,9 +739,9 @@ public class ChatServer extends WebSocketServer {
 	 */
 	private Response getGroup(String name) {
 		Group group = findGroup(name);
-		return group != null
-		? new Response(RESPONSE_TYPES.OK, "The group was readed successfully.", group, null)
-		: new Response(RESPONSE_TYPES.ERROR, "The group was not found.", null, null);
+		return
+			group != null ? new Response(RESPONSE_TYPES.OK, "The group was readed successfully.", group, null)
+			: new Response(RESPONSE_TYPES.ERROR, "The group was not found.", null, null);
 	}
 
 	/**
@@ -812,12 +760,7 @@ public class ChatServer extends WebSocketServer {
 			groups.add(group);
 			writeGroups();
 
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The new group was created successfully.",
-				group,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The new group was created successfully.", group, null);
 		}
 
 		return new Response(RESPONSE_TYPES.ERROR, "The group already exists.", null, null);
@@ -833,19 +776,12 @@ public class ChatServer extends WebSocketServer {
 	 *
 	 * @throws  IOException
 	 */
-	private Response updateGroup(String name, String avatar, String owner, String members)
-		throws IOException
-	{
+	private Response updateGroup(String name, String avatar, String owner, String members) throws IOException {
 		Group group = findGroup(name);
 		if (group != null) {
 			group.update(name, avatar, owner, members);
 			writeGroups();
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The group was updated successfully.",
-				group,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The group was updated successfully.", group, null);
 		}
 		return new Response(RESPONSE_TYPES.ERROR, "The group could not be updated.", null, null);
 	}
@@ -863,12 +799,7 @@ public class ChatServer extends WebSocketServer {
 			groups.remove(group);
 			removeGroupFromUsers(name);
 			writeGroups();
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The group was deleted successfully.",
-				null,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The group was deleted successfully.", null, null);
 		}
 
 		return new Response(RESPONSE_TYPES.ERROR, "The group could not be deleted.", null, null);
@@ -888,20 +819,10 @@ public class ChatServer extends WebSocketServer {
 			group.members.add(member);
 			writeGroups();
 			addUserGroup(member, name);
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The user was added to the group successfully.",
-				group,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The user was added to the group successfully.", group, null);
 		}
 
-		return new Response(
-			RESPONSE_TYPES.ERROR,
-			"The user could not be added to the group.",
-			null,
-			null
-		);
+		return new Response(RESPONSE_TYPES.ERROR, "The user could not be added to the group.", null, null);
 	}
 
 	/**
@@ -918,20 +839,10 @@ public class ChatServer extends WebSocketServer {
 			group.members.remove(member);
 			writeGroups();
 			removeUserGroup(member, name);
-			return new Response(
-				RESPONSE_TYPES.OK,
-				"The user was removed from the group successfully.",
-				group,
-				null
-			);
+			return new Response(RESPONSE_TYPES.OK, "The user was removed from the group successfully.", group, null);
 		}
 
-		return new Response(
-			RESPONSE_TYPES.ERROR,
-			"The user could not be removed from the group.",
-			null,
-			null
-		);
+		return new Response(RESPONSE_TYPES.ERROR, "The user could not be removed from the group.", null, null);
 	}
 
 	/**
@@ -1002,12 +913,13 @@ public class ChatServer extends WebSocketServer {
 			}
 		}
 
-		return new Response(
-			found ? RESPONSE_TYPES.OK : RESPONSE_TYPES.ERROR,
-			found ? "Channel found" : "Channel not found!",
-			channel,
-			null
-		);
+		return
+			new Response(
+				found ? RESPONSE_TYPES.OK : RESPONSE_TYPES.ERROR,
+				found ? "Channel found" : "Channel not found!",
+				channel,
+				null
+			);
 	}
 
 	//==== CHAT ====
@@ -1022,9 +934,7 @@ public class ChatServer extends WebSocketServer {
 	 *
 	 * @throws  IOException
 	 */
-	private Response readChat(String user, String channel, String time, int pos, int count)
-		throws IOException
-	{
+	private Response readChat(String user, String channel, String time, int pos, int count) throws IOException {
 
 		List<Chat> chats = new ArrayList<Chat>();
 		List<Chat> toBeUpdateChats = new ArrayList<Chat>();
@@ -1085,12 +995,8 @@ public class ChatServer extends WebSocketServer {
 			s_chats.add(chats.get(pos - count + i));
 		}
 
-		return new Response(
-			RESPONSE_TYPES.OK,
-			"[" + (pos - count) + "] Chats were loaded successfully.",
-			s_chats,
-			null
-		);
+		return
+			new Response(RESPONSE_TYPES.OK, "[" + (pos - count) + "] Chats were loaded successfully.", s_chats, null);
 	}
 
 	/**
@@ -1104,9 +1010,7 @@ public class ChatServer extends WebSocketServer {
 	 *
 	 * @throws  IOException
 	 */
-	private Response writeChat(String user, String channel, String text, String file, String time)
-		throws IOException
-	{
+	private Response writeChat(String user, String channel, String text, String file, String time) throws IOException {
 		BufferedWriter writer = new BufferedWriter(new FileWriter(root + CHATS_DB, true));
 
 		Chat chat = new Chat(user, channel, text, file, time, 1, false);
@@ -1114,12 +1018,13 @@ public class ChatServer extends WebSocketServer {
 		writer.write(chat.toLine() + System.lineSeparator());
 		writer.close();
 
-		return new Response(
-			RESPONSE_TYPES.OK,
-			"Chat was written successfully.",
-			chat,
-			new Notify(this, null, chat, RESPONSE_TYPES.CHAT_SENT)
-		);
+		return
+			new Response(
+				RESPONSE_TYPES.OK,
+				"Chat was written successfully.",
+				chat,
+				new Notify(this, null, chat, RESPONSE_TYPES.CHAT_SENT)
+			);
 	}
 
 	/**
@@ -1170,17 +1075,18 @@ public class ChatServer extends WebSocketServer {
 			tmFile.renameTo(dbFile);
 
 			if (notify) {
-				return new Response(
-					RESPONSE_TYPES.OK,
-					"Chat was updated successfully.",
-					null,
-					new Notify(
-						this,
+				return
+					new Response(
+						RESPONSE_TYPES.OK,
+						"Chat was updated successfully.",
 						null,
-						chat,
-						onlyState ? RESPONSE_TYPES.CHAT_RECEIVED : RESPONSE_TYPES.CHAT_UPDATED
-					)
-				);
+						new Notify(
+							this,
+							null,
+							chat,
+							onlyState ? RESPONSE_TYPES.CHAT_RECEIVED : RESPONSE_TYPES.CHAT_UPDATED
+						)
+					);
 			}
 		}
 		return new Response(RESPONSE_TYPES.ERROR, "Chat could not be updated.", null, null);
@@ -1224,12 +1130,13 @@ public class ChatServer extends WebSocketServer {
 						}
 					}
 
-					return new Response(
-						RESPONSE_TYPES.OK,
-						"Chat was deleted successfully.",
-						null,
-						new Notify(this, null, chat, RESPONSE_TYPES.CHAT_DELETED)
-					);
+					return
+						new Response(
+							RESPONSE_TYPES.OK,
+							"Chat was deleted successfully.",
+							null,
+							new Notify(this, null, chat, RESPONSE_TYPES.CHAT_DELETED)
+						);
 				}
 			}
 		}
@@ -1258,12 +1165,13 @@ public class ChatServer extends WebSocketServer {
 					c.channel = channel;
 					writeChat(c.user, c.channel, c.text, c.file, getTimestamp());
 					br.close();
-					return new Response(
-						RESPONSE_TYPES.OK,
-						"Chat was forewarded successfully.",
-						null,
-						new Notify(this, null, c, RESPONSE_TYPES.CHAT_SENT)
-					);
+					return
+						new Response(
+							RESPONSE_TYPES.OK,
+							"Chat was forewarded successfully.",
+							null,
+							new Notify(this, null, c, RESPONSE_TYPES.CHAT_SENT)
+						);
 				}
 			}
 		}
@@ -1285,8 +1193,7 @@ public class ChatServer extends WebSocketServer {
 		String nl = name.toLowerCase();
 		String format =
 			nl.endsWith("png") ? "png"
-			: nl.endsWith("jpg") ? "jpg"
-			: nl.endsWith("jpeg") ? "jpeg" : nl.endsWith("gif") ? "gif" : null;
+			: nl.endsWith("jpg") ? "jpg" : nl.endsWith("jpeg") ? "jpeg" : nl.endsWith("gif") ? "gif" : null;
 
 		if (format != null) {
 			BufferedImage bImage = ImageIO.read(new File(root + "/db/files/chats/" + name));
@@ -1345,13 +1252,8 @@ public class ChatServer extends WebSocketServer {
 	 *
 	 * @throws  IOException
 	 */
-	private void saveImage(
-		String	   user,
-		String	   channel,
-		String	   name,
-		ByteBuffer buffer,
-		boolean    isAvatar
-	) throws IOException
+	private void saveImage(String user, String channel, String name, ByteBuffer buffer, boolean isAvatar)
+		throws IOException
 	{
 		File file = new File(root + "/db/files/" + (isAvatar ? "avatar/" : "chats/") + name);
 		if (file.exists()) {
@@ -1388,8 +1290,7 @@ public class ChatServer extends WebSocketServer {
 			new TypeToken<LinkedTreeMap<String, String>>() {
 			};
 
-		LinkedTreeMap<String, String> js =
-			new GsonBuilder().create().fromJson(json, typeToken.getType());
+		LinkedTreeMap<String, String> js = new GsonBuilder().create().fromJson(json, typeToken.getType());
 
 //      for (Map.Entry<String, String> entry : js.entrySet()) {
 //          String key = entry.getKey();
@@ -1573,13 +1474,7 @@ public class ChatServer extends WebSocketServer {
 
 						saveImage(fileUser, fileChannel, fileName, request.buffer, fileIsAvatar);
 						fileUser = null;
-						response =
-							new Response(
-								RESPONSE_TYPES.OK,
-								"File was uploaded successfully.",
-								null,
-								null
-							);
+						response = new Response(RESPONSE_TYPES.OK, "File was uploaded successfully.", null, null);
 
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -1601,13 +1496,7 @@ public class ChatServer extends WebSocketServer {
 					response = close(request.conn);
 
 				} else if (REQUEST_TYPES.Login.isEqual(request.type)) {
-					response =
-						loginUser(
-							request.conn,
-							request.get("name"),
-							request.get("password"),
-							false
-						);
+					response = loginUser(request.conn, request.get("name"), request.get("password"), false);
 
 				} else if (REQUEST_TYPES.LoginCookie.isEqual(request.type)) {
 					response = loginUser(request.conn, request.get("name"), null, true);
@@ -1623,23 +1512,11 @@ public class ChatServer extends WebSocketServer {
 
 				} else if (REQUEST_TYPES.GetAllUsers.isEqual(request.type)) {
 					readUsers();
-					response =
-						new Response(
-							RESPONSE_TYPES.OK,
-							"Users were loaded successfully.",
-							users,
-							null
-						);
+					response = new Response(RESPONSE_TYPES.OK, "Users were loaded successfully.", users, null);
 
 				} else if (REQUEST_TYPES.GetAllGroups.isEqual(request.type)) {
 					readGroups();
-					response =
-						new Response(
-							RESPONSE_TYPES.OK,
-							"Groups were loaded successfully.",
-							groups,
-							null
-						);
+					response = new Response(RESPONSE_TYPES.OK, "Groups were loaded successfully.", groups, null);
 
 				} else if (REQUEST_TYPES.GetGroups.isEqual(request.type)) {
 					String og = request.get("ownGroups");
@@ -1687,12 +1564,7 @@ public class ChatServer extends WebSocketServer {
 					response = removeUserGroup(request.get("name"), request.get("group"));
 
 				} else if (REQUEST_TYPES.CreateGroup.isEqual(request.type)) {
-					response =
-						createGroup(
-							request.get("name"),
-							request.get("avatar"),
-							request.get("owner")
-						);
+					response = createGroup(request.get("name"), request.get("avatar"), request.get("owner"));
 
 				} else if (REQUEST_TYPES.UpdateGroup.isEqual(request.type)) {
 					response =
@@ -1765,12 +1637,7 @@ public class ChatServer extends WebSocketServer {
 						);
 
 				} else if (REQUEST_TYPES.ForwardChat.isEqual(request.type)) {
-					response =
-						forwardChat(
-							request.get("user"),
-							request.get("channel"),
-							request.get("time")
-						);
+					response = forwardChat(request.get("user"), request.get("channel"), request.get("time"));
 
 				} else if (REQUEST_TYPES.DownloadFile.isEqual(request.type)) {
 					response = downloadFile(request.get("name"));
@@ -1783,13 +1650,9 @@ public class ChatServer extends WebSocketServer {
 
 				} else if (REQUEST_TYPES.ResetPassword.isEqual(request.type)) {
 					response = resetPassword(request.get("name"), request.get("email"));
-					
+
 				} else if (REQUEST_TYPES.Reboot.isEqual(request.type)) {
-					response = reboot(
-						request.conn,
-						request.get("name"),
-						request.get("password")
-					);
+					response = reboot(request.conn, request.get("name"), request.get("password"));
 				} else {
 					response = new Response(RESPONSE_TYPES.ERROR, "Unknown type!", null, null);
 				}
@@ -1807,42 +1670,57 @@ public class ChatServer extends WebSocketServer {
 
 		return response;
 	}
-	
+
 	/**
-	 * 
-	 * @param username
-	 * @param email
-	 * @return Response
+	 * @param   username
+	 * @param   email
+	 *
+	 * @return  Response
 	 */
 	private Response resetPassword(String username, String email) {
 		User user = findUser(username);
-		
+
 		if (user != null) {
-			try {
-				user.update(username, "12345678", null, null, null, null, null, null);
-				writeUsers();
-				famchat.sendEmail(email);
-				
-				return new Response(RESPONSE_TYPES.OK,
-					"Your password has been reset.\n" +
-					"The new password was sent by email to your email address.",
-					user, null);
-				
-			} catch(Exception ex) {
-				return new Response(RESPONSE_TYPES.ERROR, "Could not reset the user password!\n" + 
-					ex.getMessage(), null, null);
+
+			if (user.email.equals(email)) {
+				try {
+					user.update(username, "12345678", null, null, null, null, null, null);
+					writeUsers();
+					famchat.sendEmail(email);
+
+					return
+						new Response(
+							RESPONSE_TYPES.OK,
+							"Your password has been reset.\n"
+							+ "The new password was sent by email to your email address.",
+							user,
+							null
+						);
+
+				} catch (Exception ex) {
+					return
+						new Response(
+							RESPONSE_TYPES.ERROR,
+							"Could not reset the user password!\n"
+							+ ex.getMessage(),
+							null,
+							null
+						);
+				}
+			} else {
+				return
+					new Response(RESPONSE_TYPES.ERROR, "The entered email does not match the user's email", null, null);
 			}
 		}
-		return null;
+		return new Response(RESPONSE_TYPES.ERROR, "The user could not be found.", null, null);
 	}
 
-
 	/**
-	 * 
-	 * @param conn
-	 * @param name
-	 * @param password
-	 * @return Response
+	 * @param   conn
+	 * @param   name
+	 * @param   password
+	 *
+	 * @return  Response
 	 */
 	private Response reboot(WebSocket conn, String name, String password) {
 		User user = findUser(name);
@@ -1898,17 +1776,14 @@ public class ChatServer extends WebSocketServer {
 		User(String... args) {
 			this.name = args.length > 0 ? args[0] : null;
 			this.salt = PasswordUtils.getSalt(30);
-			this.password =
-				args.length > 1 ? PasswordUtils.generateSecurePassword(args[1], this.salt) : null;
+			this.password = args.length > 1 ? PasswordUtils.generateSecurePassword(args[1], this.salt) : null;
 			this.email = args.length > 2 ? args[2] : null;
 			this.avatar = args.length > 3 ? args[3] : null;
 			this.contacts =
-				args.length > 4
-				? new ArrayList<String>(Arrays.asList(args[4].split("[" + SEPERATUG + "]")))
+				args.length > 4 ? new ArrayList<String>(Arrays.asList(args[4].split("[" + SEPERATUG + "]")))
 				: new ArrayList<String>();
 			this.groups =
-				args.length > 5
-				? new ArrayList<String>(Arrays.asList(args[5].split("[" + SEPERATUG + "]")))
+				args.length > 5 ? new ArrayList<String>(Arrays.asList(args[5].split("[" + SEPERATUG + "]")))
 				: new ArrayList<String>();
 			this.time = args.length > 6 ? args[6] : null;
 			this.status = "0";
@@ -1941,12 +1816,10 @@ public class ChatServer extends WebSocketServer {
 				this.avatar = avatar;
 			}
 			if (contacts != null) {
-				this.contacts =
-					new ArrayList<String>(Arrays.asList(contacts.split("[" + SEPERATUG + "]")));
+				this.contacts = new ArrayList<String>(Arrays.asList(contacts.split("[" + SEPERATUG + "]")));
 			}
 			if (groups != null) {
-				this.groups =
-					new ArrayList<String>(Arrays.asList(groups.split("[" + SEPERATUG + "]")));
+				this.groups = new ArrayList<String>(Arrays.asList(groups.split("[" + SEPERATUG + "]")));
 			}
 			if (time != null) {
 				this.time = time;
@@ -1959,14 +1832,29 @@ public class ChatServer extends WebSocketServer {
 		String toLine() {
 			String co = "", gr = "";
 			for (int i = 0; i < contacts.size(); i++) {
-				co += contacts.get(i) + (i < contacts.size() - 1 ? SEPERATUG : "");
+				co += contacts.get(i)
+					+ (i < contacts.size() - 1 ? SEPERATUG : "");
 			}
 			for (int i = 0; i < groups.size(); i++) {
-				gr += groups.get(i) + (i < groups.size() - 1 ? SEPERATUG : "");
+				gr += groups.get(i)
+					+ (i < groups.size() - 1 ? SEPERATUG : "");
 			}
 			String ln =
-				name + SEPERATOR + password + SEPERATOR + salt + SEPERATOR + email + SEPERATOR
-				+ avatar + SEPERATOR + co + SEPERATOR + gr + SEPERATOR + time;
+				name
+				+ SEPERATOR
+				+ password
+				+ SEPERATOR
+				+ salt
+				+ SEPERATOR
+				+ email
+				+ SEPERATOR
+				+ avatar
+				+ SEPERATOR
+				+ co
+				+ SEPERATOR
+				+ gr
+				+ SEPERATOR
+				+ time;
 
 			return ln;
 		}
@@ -2012,8 +1900,7 @@ public class ChatServer extends WebSocketServer {
 			this.avatar = args.length > 1 ? args[1] : null;
 			this.owner = args.length > 2 ? args[2] : null;
 			this.members =
-				args.length > 3
-				? new ArrayList<String>(Arrays.asList(args[3].split("[" + SEPERATUG + "]")))
+				args.length > 3 ? new ArrayList<String>(Arrays.asList(args[3].split("[" + SEPERATUG + "]")))
 				: new ArrayList<String>();
 			this.time = args.length > 4 ? args[4] : null;
 		}
@@ -2025,10 +1912,18 @@ public class ChatServer extends WebSocketServer {
 		String toLine() {
 			String me = "";
 			for (int i = 0; i < members.size(); i++) {
-				me += members.get(i) + (i < members.size() - 1 ? SEPERATUG : "");
+				me += members.get(i)
+					+ (i < members.size() - 1 ? SEPERATUG : "");
 			}
-			String ln =
-				name + SEPERATOR + avatar + SEPERATOR + owner + SEPERATOR + me + SEPERATOR + time;
+			String ln = name
+				+ SEPERATOR
+				+ avatar
+				+ SEPERATOR
+				+ owner
+				+ SEPERATOR
+				+ me
+				+ SEPERATOR
+				+ time;
 			return ln;
 		}
 
@@ -2046,8 +1941,7 @@ public class ChatServer extends WebSocketServer {
 		void update(String name, String avatar, String owner, String members) {
 			this.avatar = avatar;
 			this.owner = owner;
-			this.members =
-				new ArrayList<String>(Arrays.asList(members.split("[" + SEPERATUG + "]")));
+			this.members = new ArrayList<String>(Arrays.asList(members.split("[" + SEPERATUG + "]")));
 			this.time = getTimestamp();
 		}
 	}
@@ -2067,15 +1961,7 @@ public class ChatServer extends WebSocketServer {
 		int state;
 		boolean broadcast;
 
-		public Chat(
-			String  user,
-			String  channel,
-			String  text,
-			String  file,
-			String  time,
-			int		state,
-			boolean broadcast
-		) {
+		public Chat(String user, String channel, String text, String file, String time, int state, boolean broadcast) {
 			this.user = user;
 			this.channel = channel;
 			this.text = text;
@@ -2091,8 +1977,17 @@ public class ChatServer extends WebSocketServer {
 
 		String toLine() {
 			String ln =
-				user + SEPERATOR + channel + SEPERATOR + text + SEPERATOR + file + SEPERATOR + state
-				+ SEPERATOR + time;
+				user
+				+ SEPERATOR
+				+ channel
+				+ SEPERATOR
+				+ text
+				+ SEPERATOR
+				+ file
+				+ SEPERATOR
+				+ state
+				+ SEPERATOR
+				+ time;
 			return ln;
 		}
 
@@ -2148,10 +2043,14 @@ public class ChatServer extends WebSocketServer {
 
 					int n = msg.indexOf("password");
 					if (n != -1) {
-						msg = msg.substring(0, n + 10) + "\"***\"}";
+						msg = msg.substring(0, n + 10)
+							+ "\"***\"}";
 					}
 
-					msg = "request: " + REQUEST_TYPES.fromType(type).name() + " message: " + msg;
+					msg = "request: "
+						+ REQUEST_TYPES.fromType(type).name()
+						+ " message: "
+						+ msg;
 				}
 				log.trace(getHostname(conn) + ": " + msg);
 			}
@@ -2272,8 +2171,7 @@ public class ChatServer extends WebSocketServer {
 		// Password: AnjTucwTd3aoAKwyAek2hWV7St1HawB2/xdjguT4axA=
 
 		private static final Random RANDOM = new SecureRandom();
-		private static final String ALPHABET =
-			"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 		private static final int ITERATIONS = 10000;
 		private static final int KEY_LENGTH = 256;
 
@@ -2307,11 +2205,7 @@ public class ChatServer extends WebSocketServer {
 			return returnValue;
 		}
 
-		public static boolean verifyUserPassword(
-			String providedPassword,
-			String securedPassword,
-			String salt
-		) {
+		public static boolean verifyUserPassword(String providedPassword, String securedPassword, String salt) {
 			boolean returnValue = false;
 			String newSecurePassword = generateSecurePassword(providedPassword, salt);
 			returnValue = newSecurePassword.equalsIgnoreCase(securedPassword);
@@ -2322,7 +2216,9 @@ public class ChatServer extends WebSocketServer {
 		public static String generateTestPassword(String password) {
 			String salt = getSalt(30);
 			String pwd = PasswordUtils.generateSecurePassword(password, salt);
-			return salt + "/" + pwd;
+			return salt
+			+ "/"
+			+ pwd;
 		}
 	}
 
