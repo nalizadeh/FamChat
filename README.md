@@ -1,6 +1,6 @@
 # FamChat
 
-https://user-images.githubusercontent.com/34987997/71326782-0e65c600-2500-11ea-9c27-8ee2a03d24f7.png
+![famchat](https://user-images.githubusercontent.com/34987997/71326782-0e65c600-2500-11ea-9c27-8ee2a03d24f7.png)
 
 FamChat is a small but powerfull web chat app. It uses the TooTallNate_Java_WebSocket library. 
 It can be used in any browser on desktop, android or ios.
