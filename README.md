@@ -20,7 +20,7 @@ In order to access the FamChat from outside of your local network you have to ma
 router and firewall. These include, for example, port sharing or forwarding for HTTP / HTTPS and WS / WSS. 
 You may also have to set up your own certificates to use HTTPS and WSS. 
 
-My default settings for ports are as follows
+The default settings for ports are as follows
 
 ```
 HTTP: 8080
