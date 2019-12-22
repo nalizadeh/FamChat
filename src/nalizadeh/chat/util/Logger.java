@@ -42,11 +42,12 @@ public class Logger {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private String id;
 	private Console console;
 	private boolean traceEnabled;
 
-	private Logger(String id) {
+	protected Logger(String id) {
 		this.id = id;
 		this.traceEnabled = true;
 		setConsole(null, 80, Color.BLACK, Color.RED);

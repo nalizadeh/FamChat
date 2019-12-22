@@ -2,9 +2,6 @@
 
 package nalizadeh.chat;
 
-import nalizadeh.chat.util.Logger;
-import nalizadeh.chat.util.Logger.LoggerFactory;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,6 +43,8 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import org.java_websocket.server.WebSocketServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1154,30 +1153,34 @@ public class ChatServer extends WebSocketServer {
 	 * @throws  IOException
 	 */
 	private Response forwardChat(String user, String channel, String time) throws IOException {
+
 		File dbFile = new File(root + CHATS_DB);
 		BufferedReader br = new BufferedReader(new FileReader(dbFile));
 
-		for (String line; (line = br.readLine()) != null;) {
-			Chat c = new Chat(line);
-			if (c.time.equals(time)) {
-				if (c.user.equals(user) || c.channel.equals(user)) {
-					c.user = user;
-					c.channel = channel;
-					writeChat(c.user, c.channel, c.text, c.file, getTimestamp());
-					br.close();
-					return
-						new Response(
-							RESPONSE_TYPES.OK,
-							"Chat was forewarded successfully.",
-							null,
-							new Notify(this, null, c, RESPONSE_TYPES.CHAT_SENT)
-						);
+		if (findUser(user) != null && findUser(channel) != null) {
+
+			for (String line; (line = br.readLine()) != null;) {
+				Chat c = new Chat(line);
+				if (c.time.equals(time)) {
+					if (c.user.equals(user) || c.channel.equals(user)) {
+						c.user = user;
+						c.channel = channel;
+						writeChat(c.user, c.channel, c.text, c.file, getTimestamp());
+						br.close();
+						return
+							new Response(
+								RESPONSE_TYPES.OK,
+								"Chat was forewarded successfully.",
+								null,
+								new Notify(this, null, c, RESPONSE_TYPES.CHAT_SENT)
+							);
+					}
 				}
 			}
+			br.close();
 		}
-		br.close();
 
-		return new Response(RESPONSE_TYPES.ERROR, "Chat could not be deleted.", null, null);
+		return new Response(RESPONSE_TYPES.ERROR, "Chat could not be forwarded.", null, null);
 	}
 
 	/**

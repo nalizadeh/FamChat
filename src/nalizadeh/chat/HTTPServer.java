@@ -83,8 +83,9 @@ import javax.net.ServerSocketFactory;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 
-import nalizadeh.chat.util.Logger;
-import nalizadeh.chat.util.Logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * The {@code HTTPServer} class implements a light-weight HTTP server.
@@ -172,7 +173,7 @@ import nalizadeh.chat.util.Logger.LoggerFactory;
  * @author  Amichai Rothman
  * @since   2008-07-24
  */
-public class HTTPServer {
+public class HttpServer {
 
 	private static final String ROOT = "/works/workspace/NmdrChat/web/";
 	private static final boolean SECURE = true;
@@ -296,7 +297,7 @@ public class HTTPServer {
 	 * Constructs an HTTPServer which can accept connections on the default HTTP port 80. Note: the
 	 * {@link #start()} method must be called to start accepting connections.
 	 */
-	public HTTPServer() {
+	public HttpServer() {
 		this(null, null, null);
 	}
 
@@ -306,7 +307,7 @@ public class HTTPServer {
 	 *
 	 * @param  port  the port on which this server will accept connections
 	 */
-	public HTTPServer(Integer port, String root, Boolean secure) {
+	public HttpServer(Integer port, String root, Boolean secure) {
 
 		root = root == null ? ROOT : root;
 		secure = secure == null ? SECURE : secure;
@@ -613,6 +614,7 @@ public class HTTPServer {
 					Response tempResp = new Response(resp.getOutputStream());
 					tempResp.sendHeaders(100);
 					resp.getOutputStream().flush();
+					tempResp.close();
 				} else {
 
 					// RFC2616#14.20: if unknown expect, send 417
@@ -1679,7 +1681,9 @@ public class HTTPServer {
 			}
 		}
 		f.format("</pre></body></html>");
-		return f.toString();
+		String ret = f.toString();
+		f.close();
+		return ret;
 	}
 
 	//========
@@ -1708,7 +1712,7 @@ public class HTTPServer {
 		public void run() {
 			setName(getClass().getSimpleName() + "-" + port);
 			try {
-				ServerSocket serv = HTTPServer.this.socket; // keep local to avoid NPE when stopped
+				ServerSocket serv = HttpServer.this.socket; // keep local to avoid NPE when stopped
 				while (serv != null && !serv.isClosed()) {
 					final Socket sock = serv.accept();
 					executor.execute(
@@ -2478,7 +2482,7 @@ public class HTTPServer {
 		 *
 		 * @throws  IOException  if an error occurs
 		 *
-		 * @see     HTTPServer#parseParamsList(String)
+		 * @see     HttpServer#parseParamsList(String)
 		 */
 		public List<String[]> getParamsList() throws IOException {
 			List<String[]> queryParams = parseParamsList(uri.getRawQuery());
@@ -2580,8 +2584,8 @@ public class HTTPServer {
 		 */
 		public VirtualHost getVirtualHost() {
 			return host != null ? host
-			: (host = HTTPServer.this.getVirtualHost(getBaseURL().getHost())) != null ? host
-			: (host = HTTPServer.this.getVirtualHost(null));
+			: (host = HttpServer.this.getVirtualHost(getBaseURL().getHost())) != null ? host
+			: (host = HttpServer.this.getVirtualHost(null));
 		}
 
 		/**
@@ -2842,7 +2846,7 @@ public class HTTPServer {
 		 * Sends the full response with the given status, and the given string as the body. The text
 		 * is sent in the UTF-8 charset. If a Content-Type header was not explicitly set, it will be
 		 * set to text/html, and so the text must contain valid (and properly {@link
-		 * HTTPServer#escapeHTML escaped}) HTML.
+		 * HttpServer#escapeHTML escaped}) HTML.
 		 *
 		 * @param   status  the response status
 		 * @param   text    the text body (sent as text/html)
@@ -2868,7 +2872,7 @@ public class HTTPServer {
 		/**
 		 * Sends an error response with the given status and detailed message. An HTML body is
 		 * created containing the status and its description, as well as the message, which is
-		 * escaped using the {@link HTTPServer#escapeHTML escape} method.
+		 * escaped using the {@link HttpServer#escapeHTML escape} method.
 		 *
 		 * @param   status  the response status
 		 * @param   text    the text body (sent as text/html)
@@ -3597,7 +3601,7 @@ public class HTTPServer {
 				"Usage: java [-options] %s <directory> [secure true/false] [port]%n"
 				+ "To enable SSL: specify options -Djavax.net.ssl.keyStore, "
 				+ "-Djavax.net.ssl.keyStorePassword, etc.%n",
-				HTTPServer.class.getName()
+				HttpServer.class.getName()
 			);
 
 			root = args[0];
@@ -3605,7 +3609,7 @@ public class HTTPServer {
 			port = args.length > 2 ? Integer.parseInt(args[2]) : secure ? PORT_SS : PORT;
 		}
 
-		new HTTPServer(port, root, secure);
+		new HttpServer(port, root, secure);
 	}
 }
 

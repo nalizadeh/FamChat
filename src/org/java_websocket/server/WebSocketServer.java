@@ -46,14 +46,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.java_websocket.*;
 import org.java_websocket.drafts.Draft;
+import org.java_websocket.exceptions.InvalidDataException;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.framing.CloseFrame;
 import org.java_websocket.framing.Framedata;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.handshake.Handshakedata;
-
-import nalizadeh.chat.util.Logger;
-import nalizadeh.chat.util.Logger.LoggerFactory;
+import org.java_websocket.handshake.ServerHandshakeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <tt>WebSocketServer</tt> is an abstract class that only takes care of the
@@ -68,7 +69,7 @@ public abstract class WebSocketServer extends AbstractWebSocket implements Runna
 	 *
 	 * @since 1.4.0
 	 */
-	private static final Logger log = LoggerFactory.getLogger("WebSocket");
+	private static final Logger log = LoggerFactory.getLogger(WebSocketServer.class);
 
 	private static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors();
 
@@ -278,7 +279,9 @@ public abstract class WebSocketServer extends AbstractWebSocket implements Runna
 	 * @since 1.3.8
 	 */
 	public Collection<WebSocket> getConnections() {
-		return Collections.unmodifiableCollection( new ArrayList<WebSocket>(connections) );
+		synchronized (connections) {
+			return Collections.unmodifiableCollection( new ArrayList<WebSocket>(connections) );
+		}
 	}
 
 	public InetSocketAddress getAddress() {
@@ -558,6 +561,8 @@ public abstract class WebSocketServer extends AbstractWebSocket implements Runna
 				onError( null, e );
 			}
 		}
+		 
+		// @added by nalizadeh.org
 		onStop();
 	}
 
@@ -837,6 +842,8 @@ public abstract class WebSocketServer extends AbstractWebSocket implements Runna
 	 * Called when the server stopped successfully.
 	 *
 	 * If any error occured, onError is called instead.
+	 * 
+	 * @added by nalizadeh.org
 	 */
 	public abstract void onStop();
 
@@ -931,13 +938,17 @@ public abstract class WebSocketServer extends AbstractWebSocket implements Runna
 			return;
 		}
 		Map<Draft, List<Framedata>> draftFrames = new HashMap<Draft, List<Framedata>>();
-		for( WebSocket client : clients ) {
-			if( client != null ) {
+		List<WebSocket> clientCopy;
+		synchronized (clients) {
+			clientCopy = new ArrayList<WebSocket>(clients);
+		}
+		for (WebSocket client : clientCopy) {
+			if (client != null) {
 				Draft draft = client.getDraft();
 				fillFrames(draft, draftFrames, sData, bData);
 				try {
-					client.sendFrame( draftFrames.get( draft ) );
-				} catch ( WebsocketNotConnectedException e ) {
+					client.sendFrame(draftFrames.get(draft));
+				} catch (WebsocketNotConnectedException e) {
 					//Ignore this exception in this case
 				}
 			}

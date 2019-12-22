@@ -24,14 +24,14 @@
  */
 package org.java_websocket;
 
+import org.java_websocket.interfaces.ISSLChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
 import javax.net.ssl.SSLEngineResult.HandshakeStatus;
 import javax.net.ssl.SSLEngineResult.Status;
-
-import nalizadeh.chat.util.Logger;
-import nalizadeh.chat.util.Logger.LoggerFactory;
-
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSession;
 import java.io.EOFException;
@@ -53,14 +53,14 @@ import java.util.concurrent.Future;
 /**
  * Implements the relevant portions of the SocketChannel interface with the SSLEngine wrapper.
  */
-public class SSLSocketChannel2 implements ByteChannel, WrappedByteChannel {
+public class SSLSocketChannel2 implements ByteChannel, WrappedByteChannel, ISSLChannel {
 
     /**
      * Logger instance
      *
      * @since 1.4.0
      */
-	private static final Logger log = LoggerFactory.getLogger("WebSocket");
+    private static final Logger log = LoggerFactory.getLogger(SSLSocketChannel2.class);
 
     /**
      * This object is used to feed the {@link SSLEngine}'s wrap and unwrap methods during the handshake phase.
@@ -426,4 +426,8 @@ public class SSLSocketChannel2 implements ByteChannel, WrappedByteChannel {
         return socketChannel.isBlocking();
     }
 
+    @Override
+    public SSLEngine getSSLEngine() {
+        return sslEngine;
+    }
 }

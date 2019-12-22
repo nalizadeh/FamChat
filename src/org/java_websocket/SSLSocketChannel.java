@@ -25,10 +25,10 @@
 
 package org.java_websocket;
 
+import org.java_websocket.interfaces.ISSLChannel;
 import org.java_websocket.util.ByteBufferUtils;
-
-import nalizadeh.chat.util.Logger;
-import nalizadeh.chat.util.Logger.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLEngineResult;
@@ -63,14 +63,14 @@ import java.util.concurrent.ExecutorService;
  *         <p>
  *         Permission for usage recieved at May 25, 2017 by Alex Karnezis
  */
-public class SSLSocketChannel implements WrappedByteChannel, ByteChannel {
+public class SSLSocketChannel implements WrappedByteChannel, ByteChannel, ISSLChannel {
 
 	/**
 	 * Logger instance
 	 *
 	 * @since 1.4.0
 	 */
-	private static final Logger log = LoggerFactory.getLogger("WebSocket");
+	private static final Logger log = LoggerFactory.getLogger(SSLSocketChannel.class);
 
 	/**
 	 * The underlaying socket channel
@@ -512,5 +512,10 @@ public class SSLSocketChannel implements WrappedByteChannel, ByteChannel {
 	@Override
 	public void close() throws IOException {
 		closeConnection();
+	}
+
+	@Override
+	public SSLEngine getSSLEngine() {
+		return engine;
 	}
 }

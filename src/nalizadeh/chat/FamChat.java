@@ -3,7 +3,6 @@
 package nalizadeh.chat;
 
 import nalizadeh.chat.util.CellsLayout;
-import nalizadeh.chat.util.Logger.LoggerFactory;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -44,6 +43,8 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.slf4j.LoggerFactory;
+
 /**
  * @author  nalizadeh.org
  */
@@ -51,8 +52,8 @@ public class FamChat extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-//	private static final String ROOT = "/web/works/workspace/NmdrChat/web/";
 	private static final String ROOT = "/works/workspace/NmdrChat/web/";
+//  private static final String ROOT = "/web/works/workspace/NmdrChat/web/";
 //	private static final String ROOT = "/SPU/works/workspace_4.4/NmdrChat/web/";
 	private static final String ROOT_WS = ROOT;
 	private static final String ROOT_CS = ROOT;
@@ -81,7 +82,7 @@ public class FamChat extends JFrame {
 	private String rootCS = ROOT_CS;
 	private boolean secureWS = SECURE_WS;
 	private boolean secureCS = SECURE_CS;
-	
+
 	private int portWS = SECURE_WS ? PORT_WS_SS : PORT_WS;
 	private int portCS = SECURE_CS ? PORT_CS_SS : PORT_CS;
 
@@ -90,15 +91,14 @@ public class FamChat extends JFrame {
 
 	public FamChat() {
 		super("FamChat");
-		
+
 		readConf();
-		
+
 		initUI();
 
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-		addWindowListener(
-			new WindowAdapter() {
+		addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
 					exit();
 				}
@@ -115,114 +115,104 @@ public class FamChat extends JFrame {
 	}
 
 	private void readConf() {
-		
+
 		boolean wsSec = SECURE_WS;
 		boolean csSec = SECURE_CS;
 		int portWs = PORT_WS;
 		int portCs = PORT_CS;
 		int portWsSS = PORT_WS_SS;
 		int portCsSS = PORT_CS_SS;
-		
+
 		try(BufferedReader br = new BufferedReader(new FileReader(ROOT + "FamChat.conf"))) {
 			for (String line; (line = br.readLine()) != null;) {
 				line = line.trim();
 				if (line.startsWith("FamChat_")) {
 					String[] args = line.split(":");
 					if (args.length == 2) {
-						
+
 						args[0] = args[0].trim();
 						args[1] = args[1].trim();
 
 						if (args[0].equals("FamChat_ROOT")) {
 							rootWS = args[1];
 							rootCS = args[1];
-						}
-						else if (args[0].equals("FamChat_WS_Port")) {
+						} else if (args[0].equals("FamChat_WS_Port")) {
 							portWs = Integer.parseInt(args[1]);
-						}
-						else if (args[0].equals("FamChat_CS_Port")) {
+						} else if (args[0].equals("FamChat_CS_Port")) {
 							portCs = Integer.parseInt(args[1]);
-						}
-						else if (args[0].equals("FamChat_WS_SECURE")) {
+						} else if (args[0].equals("FamChat_WS_SECURE")) {
 							wsSec = Boolean.parseBoolean(args[1]);
-						}
-						else if (args[0].equals("FamChat_CS_SECURE")) {
+						} else if (args[0].equals("FamChat_CS_SECURE")) {
 							csSec = Boolean.parseBoolean(args[1]);
-						}
-						else if (args[0].equals("FamChat_WS_SS_Port")) {
+						} else if (args[0].equals("FamChat_WS_SS_Port")) {
 							portWsSS = Integer.parseInt(args[1]);
-						}
-						else if (args[0].equals("FamChat_CS_SS_Port")) {
+						} else if (args[0].equals("FamChat_CS_SS_Port")) {
 							portCsSS = Integer.parseInt(args[1]);
-						}
-						else if (args[0].equals("FamChat_WS_SS_Port")) {
+						} else if (args[0].equals("FamChat_WS_SS_Port")) {
 							portWsSS = Integer.parseInt(args[1]);
-						}
-						else if (args[0].equals("FamChat_SMTP_HOST")) {
+						} else if (args[0].equals("FamChat_SMTP_HOST")) {
 							SMTP_HOST = args[1];
-						}
-						else if (args[0].equals("FamChat_SMTP_PORT")) {
+						} else if (args[0].equals("FamChat_SMTP_PORT")) {
 							SMTP_PORT = Integer.parseInt(args[1]);
-						}
-						else if (args[0].equals("FamChat_SMTP_USER")) {
+						} else if (args[0].equals("FamChat_SMTP_USER")) {
 							SMTP_USER = args[1];
-						}
-						else if (args[0].equals("FamChat_SMTP_PWD")) {
+						} else if (args[0].equals("FamChat_SMTP_PWD")) {
 							SMTP_PWD = args[1];
 						}
 					}
 				}
 			}
 			br.close();
-			
+
 			portWS = wsSec ? portWsSS : portWs;
 			portCS = csSec ? portCsSS : portCs;
-			
+
 		} catch (IOException ex) {
-		}	
+		}
 	}
-	
+
 	/**
-	 * 
-	 * @param to
-	 * @throws Exception
+	 * @param   to
+	 *
+	 * @throws  Exception
 	 */
-    protected void sendEmail(String to) throws Exception {
-        
-        final String FROM = SMTP_USER;
-        final String FROMNAME = "FamChat";
-    	final String SUBJECT = "FamChat password reset";
-        
-        final String BODY = String.join(
-        	    System.getProperty("line.separator"),
-        	    "<h1>FamChat password reset</h1>",
-        	    "<p>Your password has been reset.</p>", 
-        	    "<p>Your new password is '12345678', after login you may change your password.</p>"
-        	);
-        
-        final String CONFIGSET = "ConfigSet";
+	protected void sendEmail(String to) throws Exception {
 
-	    Properties props = System.getProperties();
-	    props.put("mail.transport.protocol", "smtp");
-	    props.put("mail.smtp.port", SMTP_PORT); 
-	    props.put("mail.smtp.starttls.enable", "true");
-	    props.put("mail.smtp.auth", "true");
-	
-	    Session session = Session.getDefaultInstance(props);
-	
-	    MimeMessage msg = new MimeMessage(session);
-	    msg.setFrom(new InternetAddress(FROM,FROMNAME));
-	    msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-	    msg.setSubject(SUBJECT);
-	    msg.setContent(BODY,"text/html");
-	    
-	    msg.setHeader("X-SES-CONFIGURATION-SET", CONFIGSET);
+		final String FROM = SMTP_USER;
+		final String FROMNAME = "FamChat";
+		final String SUBJECT = "FamChat password reset";
 
-	    Transport transport = session.getTransport();
-	    transport.connect(SMTP_HOST, SMTP_USER, SMTP_PWD);
-       
-        transport.sendMessage(msg, msg.getAllRecipients());        
-    }
+		final String BODY =
+			String.join(
+				System.getProperty("line.separator"),
+				"<h1>FamChat password reset</h1>",
+				"<p>Your password has been reset.</p>",
+				"<p>Your new password is '12345678', after login you may change your password.</p>"
+			);
+
+		final String CONFIGSET = "ConfigSet";
+
+		Properties props = System.getProperties();
+		props.put("mail.transport.protocol", "smtp");
+		props.put("mail.smtp.port", SMTP_PORT);
+		props.put("mail.smtp.starttls.enable", "true");
+		props.put("mail.smtp.auth", "true");
+
+		Session session = Session.getDefaultInstance(props);
+
+		MimeMessage msg = new MimeMessage(session);
+		msg.setFrom(new InternetAddress(FROM, FROMNAME));
+		msg.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+		msg.setSubject(SUBJECT);
+		msg.setContent(BODY, "text/html");
+
+		msg.setHeader("X-SES-CONFIGURATION-SET", CONFIGSET);
+
+		Transport transport = session.getTransport();
+		transport.connect(SMTP_HOST, SMTP_USER, SMTP_PWD);
+
+		transport.sendMessage(msg, msg.getAllRecipients());
+	}
 
 	private void exit() {
 		int confirm =
@@ -241,25 +231,25 @@ public class FamChat extends JFrame {
 			System.exit(0);
 		}
 	}
-	
+
 	protected void reboot() {
-		
+
 		webRunner.stop();
 		chatRunner.stop();
-		
-		new Timer().schedule( 
+
+		new Timer().schedule(
 			new TimerTask() {
-		        @Override
-		        public void run() {
-		        	webRunner.start();
-		        	chatRunner.start();		
-		        }
-		    }, 
-		    10000 
+				@Override
+				public void run() {
+					webRunner.start();
+					chatRunner.start();
+				}
+			},
+			10000
 		);
 	}
 
-    private void initUI() {
+	private void initUI() {
 
 		final JTextPane tfWeb = new JTextPane();
 		final JTextPane tfChat = new JTextPane();
@@ -269,13 +259,9 @@ public class FamChat extends JFrame {
 		tfWeb.setBackground(new Color(255, 255, 245));
 		tfChat.setBackground(new Color(255, 255, 245));
 
-		LoggerFactory
-			.getLogger("HttpServer")
-			.setConsole(tfWeb, 200, new Color(37, 117, 160), Color.RED);
+		LoggerFactory.getLogger("HttpServer").setConsole(tfWeb, 200, new Color(37, 117, 160), Color.RED);
 
-		LoggerFactory
-			.getLogger("ChatServer")
-			.setConsole(tfChat, 200, new Color(52, 146, 68), Color.RED);
+		LoggerFactory.getLogger("ChatServer").setConsole(tfChat, 200, new Color(52, 146, 68), Color.RED);
 
 		LoggerFactory.getLogger("WebSocket").setConsole(tfChat, 200, Color.BLACK, Color.RED);
 
@@ -350,9 +336,7 @@ public class FamChat extends JFrame {
 		cbSecureWS.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					tfPortWS.setText(
-						Integer.toString(cbSecureWS.isSelected() ? PORT_WS_SS : PORT_WS)
-					);
+					tfPortWS.setText(Integer.toString(cbSecureWS.isSelected() ? PORT_WS_SS : PORT_WS));
 				}
 			}
 		);
@@ -407,9 +391,7 @@ public class FamChat extends JFrame {
 		cbSecureCS.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					tfPortCS.setText(
-						Integer.toString(cbSecureCS.isSelected() ? PORT_CS_SS : PORT_CS)
-					);
+					tfPortCS.setText(Integer.toString(cbSecureCS.isSelected() ? PORT_CS_SS : PORT_CS));
 				}
 			}
 		);
@@ -459,15 +441,9 @@ public class FamChat extends JFrame {
 		spLines.addChangeListener(
 			new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
-					LoggerFactory
-						.getLogger("HttpServer")
-						.setLines((Integer) spLines.getModel().getValue());
-					LoggerFactory
-						.getLogger("ChatServer")
-						.setLines((Integer) spLines.getModel().getValue());
-					LoggerFactory
-						.getLogger("WebSocket")
-						.setLines((Integer) spLines.getModel().getValue());
+					LoggerFactory.getLogger("HttpServer").setLines((Integer) spLines.getModel().getValue());
+					LoggerFactory.getLogger("ChatServer").setLines((Integer) spLines.getModel().getValue());
+					LoggerFactory.getLogger("WebSocket").setLines((Integer) spLines.getModel().getValue());
 				}
 			}
 		);
@@ -539,10 +515,10 @@ public class FamChat extends JFrame {
 
 	class WebRunner implements Runnable {
 
-		private HTTPServer server;
+		private HttpServer server;
 
 		public void start() {
-			this.server = new HTTPServer(portWS, rootWS, secureWS);
+			this.server = new HttpServer(portWS, rootWS, secureWS);
 			new Thread(this).start();
 		}
 
@@ -575,7 +551,7 @@ public class FamChat extends JFrame {
 		public ChatRunner(FamChat famchat) {
 			this.famchat = famchat;
 		}
-		
+
 		public void start() {
 			try {
 				this.server = new ChatServer(portCS, rootCS, secureCS);

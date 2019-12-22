@@ -242,7 +242,7 @@ table {
     border-radius: .5em;
 }
 
-.xchatDivTo:after { /* commented out due do it with image */
+.xchatDivTo:after { /* commented out due doing it with image */
 	content: '';
 	position: absolute;
 	left: 0;
@@ -262,7 +262,7 @@ table {
     border-radius: .5em;
 }
 
-.xchatDivFrom:after { /* commented out due do it with image */
+.xchatDivFrom:after { /* commented out due doing it with image */
 	content: '';
 	position: absolute;
 	right: 0;

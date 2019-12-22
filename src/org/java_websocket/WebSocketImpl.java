@@ -25,6 +25,7 @@
 
 package org.java_websocket;
 
+import org.java_websocket.interfaces.ISSLChannel;
 import org.java_websocket.drafts.Draft;
 import org.java_websocket.drafts.Draft_6455;
 import org.java_websocket.enums.*;
@@ -35,9 +36,6 @@ import org.java_websocket.framing.PingFrame;
 import org.java_websocket.handshake.*;
 import org.java_websocket.server.WebSocketServer.WebSocketWorker;
 import org.java_websocket.util.Charsetfunctions;
-
-import nalizadeh.chat.util.Logger;
-import nalizadeh.chat.util.Logger.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -50,6 +48,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.SSLSession;
 
 /**
  * Represents one end (client or server) of a single WebSocketImpl connection.
@@ -82,7 +85,7 @@ public class WebSocketImpl implements WebSocket {
 	 *
 	 * @since 1.4.0
 	 */
-	private static final Logger log = LoggerFactory.getLogger("WebSocket");
+	private static final Logger log = LoggerFactory.getLogger(WebSocketImpl.class);
 
 	/**
 	 * Queue of buffers that need to be sent to the client.
@@ -157,11 +160,6 @@ public class WebSocketImpl implements WebSocket {
 	 * Attribut to synchronize the write
 	 */
 	private final Object synchronizeWriteObject = new Object();
-
-	/**
-	 * Attribute to cache a ping frame
-	 */
-	private PingFrame pingFrame;
 
 	/**
 	 * Attribute to store connection attachment
@@ -655,11 +653,12 @@ public class WebSocketImpl implements WebSocket {
 		send( Collections.singletonList( framedata ) );
 	}
 
-	public void sendPing() {
-		if( pingFrame == null ) {
-			pingFrame = new PingFrame();
-		}
-		sendFrame( pingFrame );
+	public void sendPing() throws NullPointerException {
+		// Gets a PingFrame from WebSocketListener(wsl) and sends it.
+		PingFrame pingFrame = wsl.onPreparePing(this);
+		if(pingFrame == null)
+			throw new NullPointerException("onPreparePing(WebSocket) returned null. PingFrame to sent can't be null.");
+		sendFrame(pingFrame);
 	}
 
 	@Override
@@ -818,6 +817,19 @@ public class WebSocketImpl implements WebSocket {
 	@SuppressWarnings("unchecked")
 	public <T> T getAttachment() {
 		return (T) attachment;
+	}
+
+	@Override
+	public boolean hasSSLSupport() {
+		return channel instanceof ISSLChannel;
+	}
+
+	@Override
+	public SSLSession getSSLSession() {
+		if (!hasSSLSupport()) {
+			throw new IllegalArgumentException("This websocket uses ws instead of wss. No SSLSession available.");
+		}
+		return ((ISSLChannel) channel).getSSLEngine().getSession();
 	}
 
 	@Override
