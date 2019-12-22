@@ -32,7 +32,7 @@ WSS: 444
 
 ### Installing
 
-The installation consists of just a few steps. Simply copy the directory `web` to any location and edit the 
+The installation consists of just a few steps. Simply copy the directory **web** to any location and edit the 
 FamChat.conf file. Then start the executable FamChat.jar.  
 
 ```
