@@ -76,24 +76,15 @@ That is all you have to do on the server.
 
 ## Using client chat app
 
-Simply call http://localhost:8080 in your browser. 
 
-Depending on how the server is started, you can call the FamChat secure or unencrypted.
+## Deployment
 
-## Used libraries
-
-TooTallNate Java_WebSocket
-https://github.com/TooTallNate/Java-WebSocket
-
-JSON
-gson-2.8.5.jar
-
-Java Mail
-javax.mail.jar
 
 ## Built With
 
-Eclipse 
+
+## Versioning
+
 
 ## Authors
 
