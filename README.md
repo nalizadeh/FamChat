@@ -97,15 +97,15 @@ javax.mail.jar
 
 Eclipse 
 
+## Minimum Required JDK
+
+Java 1.7 and higher
+
 ## Authors
 
 nalizadeh.org
 
 ## License
 
-FamChat is an open source project.
-
-## Acknowledgments
-
-nalizadeh.org
+FamChat is licensed under an MIT license. See the LICENSE file for specifics.
 
