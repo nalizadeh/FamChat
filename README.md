@@ -78,7 +78,7 @@ That is all you have to do on the server.
 
 ## Using client chat app
 
-Simply call http://localhost:8080 in your browser. 
+Simply call `http://localhost:8080` in your browser. 
 
 Depending on how the server is started, you can call the FamChat secure or unencrypted.
 
