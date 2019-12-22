@@ -746,6 +746,15 @@ function isActiveElement(elem) {
 	return false;
 }
 
+function addCSSRule(sheet, selector, rules, index) {
+	try {
+		if ("insertRule" in sheet) sheet.insertRule(selector + "{" + rules + "}", index);
+		else if ("addRule" in sheet) sheet.addRule(selector, rules, index);
+	} catch(err) {
+		try { if ("addRule" in sheet) sheet.addRule(selector, rules, index); } catch(err) {}
+	}
+}
+
 //======= APP ========
 
 function updateActions(username, usavatar, channel, chavatar, logout) {
@@ -1534,36 +1543,9 @@ function updateUserAvatar(user) {
 
 //======= CHAT ========
 
-function addCSSRule(sheet, selector, rules, index) {
-	try {
-		if ("insertRule" in sheet) sheet.insertRule(selector + "{" + rules + "}", index);
-		else if ("addRule" in sheet) sheet.addRule(selector, rules, index);
-	} catch(err) {
-		try { if ("addRule" in sheet) sheet.addRule(selector, rules, index); } catch(err) {}
-	}
-}
-
 function clearChatArea() {
 	var ca = document.getElementById("chatArea");
 	ca.innerHTML = "<table id='chatAreaTable' border=0, cellpadding=0, cellspacing=0 width='100%'></table>";
-}
-
-function download(nm) {
-	if (typeof app !== "undefined") {
-		var fn = nm.split("\\").pop().split("/").pop();
-		app.saveImage(FILESURL + "chats/" + nm, fn);
-	}
-	else {
-		wsDownloadFile(nm);
-	}
-}
-
-function forwardChat(tm) {
-	var channel = prompt("Please enter channel", "");
-	if (channel != null && channel != "") {
-		wsForwardChat(USERNAME, channel, tm, function(response) {
-		});
-	}
 }
 
 function createTextDiv(user, txt, file, tm, ck, upload, update, del, callback) {
@@ -1979,6 +1961,14 @@ function showChats(chats, callback) {
 	show(0);
 }
 
+function forwardChat(tm) {
+	var channel = prompt("Please enter channel", "");
+	if (channel != null && channel != "") {
+		wsForwardChat(USERNAME, channel, tm, function(response) {
+		});
+	}
+}
+
 function updateUserStatus(user) {
 	var d1 = document.getElementById("stx" + user.name);
 	var d2 = document.getElementById("tmx" + user.name);
@@ -1987,6 +1977,16 @@ function updateUserStatus(user) {
 			(user.status == "1" ? "online" : "offline");
 		d1.innerHTML = st;
 		d2.innerHTML = tsToDateTime(user.time);
+	}
+}
+
+function download(nm) {
+	if (typeof app !== "undefined") {
+		var fn = nm.split("\\").pop().split("/").pop();
+		app.saveImage(FILESURL + "chats/" + nm, fn);
+	}
+	else {
+		wsDownloadFile(nm);
 	}
 }
 
