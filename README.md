@@ -107,5 +107,5 @@ nalizadeh.org
 
 ## License
 
-FamChat is licensed under an MIT license. See the LICENSE file for specifics.
+FamChat is licensed under an MIT license. See the `LICENSE` file for specifics.
 
