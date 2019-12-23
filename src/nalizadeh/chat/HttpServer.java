@@ -300,7 +300,7 @@ public class HttpServer {
 	 * {@link #start()} method must be called to start accepting connections.
 	 */
 	public HttpServer() {
-		this(null, null, null);
+		this(null, null, null, null, null);
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class HttpServer {
 	 *
 	 * @param  port  the port on which this server will accept connections
 	 */
-	public HttpServer(Integer port, String root, Boolean secure) {
+	public HttpServer(Integer port, String root, Boolean secure, String keystore, String keypwd) {
 
 		root = root == null ? ROOT : root;
 		secure = secure == null ? SECURE : secure;
@@ -320,11 +320,8 @@ public class HttpServer {
 			setPort(port);
 
 			if (secure) {
-				System.setProperty(
-					"javax.net.ssl.keyStore",
-					root + "res/cert/nalizadeh.dynv6.net_nalizadehca.p12"
-				);
-				System.setProperty("javax.net.ssl.keyStorePassword", "namadaro");
+				System.setProperty("javax.net.ssl.keyStore", root + keystore);
+				System.setProperty("javax.net.ssl.keyStorePassword", keypwd);
 			}
 
 			File dir = new File(root);
@@ -3611,6 +3608,6 @@ public class HttpServer {
 			port = args.length > 2 ? Integer.parseInt(args[2]) : secure ? PORT_SS : PORT;
 		}
 
-		new HttpServer(port, root, secure);
+		new HttpServer(port, root, secure, null, null);
 	}
 }

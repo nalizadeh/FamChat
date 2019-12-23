@@ -83,7 +83,7 @@ public class ChatServer extends WebSocketServer {
 	private static final boolean SECURE = true;
 	private static final int PORT = 8181;
 	private static final int PORT_SS = 444;
-
+	
 	private static String USERS_DB = "/db/users.db";
 	private static String GROUPS_DB = "/db/groups.db";
 	private static String CHATS_DB = "/db/chats.db";
@@ -99,6 +99,11 @@ public class ChatServer extends WebSocketServer {
 	private List<Group> groups = new ArrayList<Group>();
 
 	private String root;
+	
+	private String keystore;
+	private String storepwd;
+	private String keypwd;
+	
 	private static boolean isActive = false;
 
 	private static final Logger log = LoggerFactory.getLogger("ChatServer");
@@ -198,26 +203,35 @@ public class ChatServer extends WebSocketServer {
 	 * @throws  UnknownHostException
 	 */
 	public ChatServer() throws UnknownHostException {
-		this(SECURE ? PORT_SS : PORT, ROOT, SECURE);
+		this(SECURE ? PORT_SS : PORT, ROOT, SECURE, null, null, null);
 	}
 
 	/**
 	 * @throws  UnknownHostException
 	 */
-	public ChatServer(Integer port, String root, boolean secure) throws UnknownHostException {
+	public ChatServer(
+			Integer port, 
+			String root, 
+			boolean secure,
+			String keystore,
+			String storepwd, 
+			String keypwd) throws UnknownHostException {
 
 		super(new InetSocketAddress(port == null ? secure ? PORT_SS : PORT : port));
 
 		this.root = root == null ? ROOT : root;
+		this.keystore = keystore;
+		this.storepwd = storepwd;
+		this.keypwd = keypwd;
 
 		initDB();
 
 		if (secure) {
 			try {
 				String STORETYPE = "JKS";
-				String KEYSTORE = this.root + "/res/cert/nalizadeh.dynv6.net_nalizadehca.p12";
-				String STOREPASSWORD = "namadaro";
-				String KEYPASSWORD = "namadaro";
+				String KEYSTORE = this.root + this.keystore;
+				String STOREPASSWORD = this.storepwd;
+				String KEYPASSWORD = this.keypwd;
 
 				KeyStore ks = KeyStore.getInstance(STORETYPE);
 				File kf = new File(KEYSTORE);

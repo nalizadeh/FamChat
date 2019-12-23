@@ -88,6 +88,10 @@ public class FamChat extends JFrame {
 	private static final int PORT_WS_SS = 443;
 	private static final int PORT_CS_SS = 444;
 
+	private static String KEYSTORE = "/res/cert/nalizadeh.dynv6.net_nalizadehca.p12";
+	private static String STOREPWD = "namadaro";
+	private static String KEYPWD = "namadaro";
+
 	private String SMTP_HOST = "";
 	private int SMTP_PORT = 0;
 	private String SMTP_USER = "";
@@ -106,6 +110,10 @@ public class FamChat extends JFrame {
 
 	private int portWS = SECURE_WS ? PORT_WS_SS : PORT_WS;
 	private int portCS = SECURE_CS ? PORT_CS_SS : PORT_CS;
+
+	private String keystore = KEYSTORE;
+	private String storepwd = STOREPWD;
+	private String keypwd = KEYPWD;
 
 	private WebRunner webRunner = new WebRunner();
 	private ChatRunner chatRunner = new ChatRunner(this);
@@ -159,6 +167,7 @@ public class FamChat extends JFrame {
 		int portWsSS = PORT_WS_SS;
 		int portCsSS = PORT_CS_SS;
 
+		//D:\\works\\workspace\\NmdrChat\\src\\nalizadeh\\web\\
 		try(BufferedReader br = new BufferedReader(new FileReader("FamChat.conf"))) {
 			for (String line; (line = br.readLine()) != null;) {
 				line = line.trim();
@@ -186,6 +195,12 @@ public class FamChat extends JFrame {
 							portCsSS = Integer.parseInt(args[1]);
 						} else if (args[0].equals("FamChat_WS_SS_Port")) {
 							portWsSS = Integer.parseInt(args[1]);
+						} else if (args[0].equals("FamChat_KEYSTORE")) {
+							keystore = args[1];
+						} else if (args[0].equals("FamChat_STOREPASSWORD")) {
+							storepwd = args[1];
+						} else if (args[0].equals("FamChat_KEYPASSWORD")) {
+							keypwd = args[1];
 						} else if (args[0].equals("FamChat_SMTP_HOST")) {
 							SMTP_HOST = args[1];
 						} else if (args[0].equals("FamChat_SMTP_PORT")) {
@@ -555,7 +570,7 @@ public class FamChat extends JFrame {
 		private HttpServer server;
 
 		public void start() {
-			this.server = new HttpServer(portWS, rootWS, secureWS);
+			this.server = new HttpServer(portWS, rootWS, secureWS, keystore, keypwd);
 			new Thread(this).start();
 		}
 
@@ -591,7 +606,7 @@ public class FamChat extends JFrame {
 
 		public void start() {
 			try {
-				this.server = new ChatServer(portCS, rootCS, secureCS);
+				this.server = new ChatServer(portCS, rootCS, secureCS, keystore, storepwd, keypwd);
 				this.server.setFamChat(famchat);
 				new Thread(this).start();
 			} catch (UnknownHostException ex) {
