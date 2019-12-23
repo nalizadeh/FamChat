@@ -92,7 +92,7 @@ FamChat offers a nice HTML page.
 
 ![fc2](https://user-images.githubusercontent.com/34987997/71380707-90252480-25d0-11ea-954d-a3769e53c587.png)
 
-To be able to use this page, you must first adapt the following lines in the JavaScript file **web/res/app.js**
+To be able to use this page, you must first edit the following lines in the JavaScript file **web/res/app.js**
 
 ```
 //=======================================================
