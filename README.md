@@ -88,8 +88,11 @@ That is all you have to do on the server.
 
 ## Client site settings
 
-FamChat offers a nice HTML page. To be able to use this page, you must first adapt the following lines in the 
-JavaScript file **web/res/app.js**
+FamChat offers a nice HTML page. 
+
+![fc3](https://user-images.githubusercontent.com/34987997/71380629-50f6d380-25d0-11ea-80ec-8863eab1c41f.png)
+
+To be able to use this page, you must first adapt the following lines in the JavaScript file **web/res/app.js**
 
 ```
 //=======================================================
