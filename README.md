@@ -78,6 +78,8 @@ FamChat_SMTP_PWD:<password>
 
 The server comes with a graphical user interface.
 
+![fc01](https://user-images.githubusercontent.com/34987997/71380406-51429f00-25cf-11ea-9f32-fffb974580ae.png)
+
 The information about the root directory and the ports have already been read from the configuration file. 
 These can also be changed here at any time. Before changing these settings, however, the HTTP server and chat server 
 must be stopped and restarted. The buffer size for log output can also be determined here.
