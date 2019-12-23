@@ -90,7 +90,7 @@ That is all you have to do on the server.
 
 FamChat offers a nice HTML page. 
 
-![fc3](https://user-images.githubusercontent.com/34987997/71380629-50f6d380-25d0-11ea-80ec-8863eab1c41f.png)
+![fc2](https://user-images.githubusercontent.com/34987997/71380707-90252480-25d0-11ea-954d-a3769e53c587.png)
 
 To be able to use this page, you must first adapt the following lines in the JavaScript file **web/res/app.js**
 
