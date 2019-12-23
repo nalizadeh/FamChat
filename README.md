@@ -76,6 +76,23 @@ must be stopped and restarted. The buffer size for log output can also be determ
 
 That is all you have to do on the server. 
 
+## Client site settings
+
+FamChat offers a nice HTML page. To be able to use this page, you must first adapt the following lines in the 
+JavaScript file **web/res/app.js**
+
+```
+//=======================================================
+// Public settings (needs to be adapted to your network)
+//=======================================================
+
+const MY_DOMAIN = "nalizadeh.dynv6.net";
+const MY_HTTP_PORT = "8080";
+const MY_HTTPS_PORT = "443";
+const MY_WS_PORT = "8181";
+const MY_WSS_PORT = "444";
+```
+
 ## Using client chat app
 
 Simply call `http://localhost:8080` in your browser. 

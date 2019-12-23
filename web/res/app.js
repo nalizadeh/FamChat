@@ -1,18 +1,35 @@
-/*
+// Copyright (c) 2019 nalizadeh.org
+//
+// Permission is hereby granted, free of charge, to any person
+// obtaining a copy of this software and associated documentation
+// files (the "Software"), to deal in the Software without
+// restriction, including without limitation the rights to use,
+// copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the
+// Software is furnished to do so, subject to the following
+// conditions:
+//
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+// OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+// HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+// WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+// OTHER DEALINGS IN THE SOFTWARE.
 
-keytools:
-https://help.marklogic.com/Knowledgebase/Article/View/572/0/using-keystore-explorer-to-generate-ca-root-and-end-user-ssl-certificates-for-marklogic-server
+//=======================================================
+// Public settings (needs to be adapted to your network)
+//=======================================================
 
-openssl:
-https://thomas-leister.de/selbst-signierte-tls-zertifikate-mit-eigener-ca/
-openssl genrsa -aes256 -out nalizadehCA.key 2048
-openssl req -x509 -new -nodes -extensions v3_ca -key nalizadehCA.key -days 730 -out nalizadehCA.cer -sha512
-openssl genrsa -out nalizadeh.dynv6.net.key 4096
-openssl req -new -key nalizadeh.dynv6.net.key -out nalizadeh.dynv6.net.csr
-openssl x509 -req -in nalizadeh.dynv6.net.csr -CA nalizadehCA.cer -CAkey nalizadehCA.key -CAcreateserial -out nalizadeh.dynv6.net.cer -days 365 -sha512
-type nalizadehCA.cer >> nalizadeh.dynv6.net.cer
-
-*/
+const MY_DOMAIN = "nalizadeh.dynv6.net";
+const MY_HTTP_PORT = "8080";
+const MY_HTTPS_PORT = "443";
+const MY_WS_PORT = "8181";
+const MY_WSS_PORT = "444";
 
 //===============================
 // Concurrency
@@ -52,13 +69,13 @@ function showLoading(show, message, callback) {
 // WebSocket
 //===============================
 
-const MYWEB_1 = "http://localhost:8080/";
-const MYWEB_2 = "http://nalizadeh.dynv6.net:8080/";
-const MYWEB_3 = "https://nalizadeh.dynv6.net:443/";
+const MYWEB_1 = "http://localhost:" + MY_HTTP_PORT + "/";
+const MYWEB_2 = "http://" + MY_DOMAIN + ":" + MY_HTTP_PORT + "/";
+const MYWEB_3 = "https://" + MY_DOMAIN + ":" + MY_HTTPS_PORT + "/";
 
-const MYWEBS_1 = "ws://localhost:8181/";
-const MYWEBS_2 = "ws://nalizadeh.dynv6.net:8181/";
-const MYWEBS_3 = "wss://nalizadeh.dynv6.net:444/";
+const MYWEBS_1 = "ws://localhost:" + MY_WS_PORT + "/";
+const MYWEBS_2 = "ws://" + MY_DOMAIN + ":" + MY_WS_PORT + "/";
+const MYWEBS_3 = "wss://" + MY_DOMAIN + ":" + MY_WSS_PORT + "/";
 
 const REQUEST_TYPES = {
 	InitUsers: 100,
@@ -744,15 +761,6 @@ function isActiveElement(elem) {
 		ae = ae.parentNode;
 	}
 	return false;
-}
-
-function addCSSRule(sheet, selector, rules, index) {
-	try {
-		if ("insertRule" in sheet) sheet.insertRule(selector + "{" + rules + "}", index);
-		else if ("addRule" in sheet) sheet.addRule(selector, rules, index);
-	} catch(err) {
-		try { if ("addRule" in sheet) sheet.addRule(selector, rules, index); } catch(err) {}
-	}
 }
 
 //======= APP ========
@@ -1543,9 +1551,36 @@ function updateUserAvatar(user) {
 
 //======= CHAT ========
 
+function addCSSRule(sheet, selector, rules, index) {
+	try {
+		if ("insertRule" in sheet) sheet.insertRule(selector + "{" + rules + "}", index);
+		else if ("addRule" in sheet) sheet.addRule(selector, rules, index);
+	} catch(err) {
+		try { if ("addRule" in sheet) sheet.addRule(selector, rules, index); } catch(err) {}
+	}
+}
+
 function clearChatArea() {
 	var ca = document.getElementById("chatArea");
 	ca.innerHTML = "<table id='chatAreaTable' border=0, cellpadding=0, cellspacing=0 width='100%'></table>";
+}
+
+function download(nm) {
+	if (typeof app !== "undefined") {
+		var fn = nm.split("\\").pop().split("/").pop();
+		app.saveImage(FILESURL + "chats/" + nm, fn);
+	}
+	else {
+		wsDownloadFile(nm);
+	}
+}
+
+function forwardChat(tm) {
+	var channel = prompt("Please enter channel", "");
+	if (channel != null && channel != "") {
+		wsForwardChat(USERNAME, channel, tm, function(response) {
+		});
+	}
 }
 
 function createTextDiv(user, txt, file, tm, ck, upload, update, del, callback) {
@@ -1961,14 +1996,6 @@ function showChats(chats, callback) {
 	show(0);
 }
 
-function forwardChat(tm) {
-	var channel = prompt("Please enter channel", "");
-	if (channel != null && channel != "") {
-		wsForwardChat(USERNAME, channel, tm, function(response) {
-		});
-	}
-}
-
 function updateUserStatus(user) {
 	var d1 = document.getElementById("stx" + user.name);
 	var d2 = document.getElementById("tmx" + user.name);
@@ -1977,16 +2004,6 @@ function updateUserStatus(user) {
 			(user.status == "1" ? "online" : "offline");
 		d1.innerHTML = st;
 		d2.innerHTML = tsToDateTime(user.time);
-	}
-}
-
-function download(nm) {
-	if (typeof app !== "undefined") {
-		var fn = nm.split("\\").pop().split("/").pop();
-		app.saveImage(FILESURL + "chats/" + nm, fn);
-	}
-	else {
-		wsDownloadFile(nm);
 	}
 }
 
