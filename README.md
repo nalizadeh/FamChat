@@ -57,6 +57,14 @@ FamChat_WS_SS_Port:443
 FamChat_CS_SS_Port:444
 
 ########################################
+# SSL configuration
+########################################
+
+FamChat_KEYSTORE:/res/cert/nalizadeh.dynv6.net_nalizadehca.p12
+FamChat_STOREPASSWORD:namadaro
+FamChat_KEYPASSWORD:namadaro
+
+########################################
 # email configuration
 ########################################
 
