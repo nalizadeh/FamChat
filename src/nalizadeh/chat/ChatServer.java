@@ -115,9 +115,6 @@ public class ChatServer extends WebSocketServer {
 
 	FamChat famchat;
 
-	/**
-	 * @author  nalizadeh.org
-	 */
 	private enum REQUEST_TYPES {
 		InitUsers(100), //
 		InitGroups(101), //
@@ -176,9 +173,6 @@ public class ChatServer extends WebSocketServer {
 		}
 	}
 
-	/**
-	 * @author  nalizadeh.org
-	 */
 	private enum RESPONSE_TYPES {
 		OK(0), //
 		ERROR(1), //

@@ -33,6 +33,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
@@ -74,19 +75,17 @@ public class FamChat extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	private static final String ROOT = "/works/workspace/NmdrChat/web/";
-//  private static final String ROOT = "/web/works/workspace/NmdrChat/web/";
-//	private static final String ROOT = "/SPU/works/workspace_4.4/NmdrChat/web/";
 	private static final String ROOT_WS = ROOT;
 	private static final String ROOT_CS = ROOT;
-
-	private static final boolean SECURE_WS = false;
-	private static final boolean SECURE_CS = false;
 
 	private static final int PORT_WS = 8080;
 	private static final int PORT_CS = 8181;
 
 	private static final int PORT_WS_SS = 443;
 	private static final int PORT_CS_SS = 444;
+
+	private static final boolean SECURE_WS = false;
+	private static final boolean SECURE_CS = false;
 
 	private static String KEYSTORE = "/res/cert/nalizadeh.dynv6.net_nalizadehca.p12";
 	private static String STOREPWD = "namadaro";
@@ -158,6 +157,9 @@ public class FamChat extends JFrame {
 		}
 	}
 
+	/**
+	 * 
+	 */
 	private void readConf() {
 
 		boolean wsSec = SECURE_WS;
@@ -167,8 +169,10 @@ public class FamChat extends JFrame {
 		int portWsSS = PORT_WS_SS;
 		int portCsSS = PORT_CS_SS;
 
-		//D:\\works\\workspace\\NmdrChat\\src\\nalizadeh\\web\\
-		try(BufferedReader br = new BufferedReader(new FileReader("FamChat.conf"))) {
+//		File file = new File(FamChat.class.getResource("FamChat.conf").getFile());
+		File file = new File("FamChat.conf");
+		
+		try(BufferedReader br = new BufferedReader(new FileReader(file))) {
 			for (String line; (line = br.readLine()) != null;) {
 				line = line.trim();
 				if (line.startsWith("FamChat_")) {
