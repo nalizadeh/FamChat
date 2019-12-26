@@ -114,26 +114,25 @@ Depending on how the server is started, you can call the FamChat secure or unenc
 
 ![fc011](https://user-images.githubusercontent.com/34987997/71482609-d57d6800-2803-11ea-8204-d6749ce42581.png)
 
-The first thing to do is register a user
+## User, groups and contacts setting
+
+First of all you have to register a user
 
 ![s0](https://user-images.githubusercontent.com/34987997/71482716-50468300-2804-11ea-8b2c-5fc13f7878fe.png)
 
-![s2](https://user-images.githubusercontent.com/34987997/71482170-7cacd000-2801-11ea-9479-bd7cda105539.png)
+![s1](https://user-images.githubusercontent.com/34987997/71482186-9221fa00-2801-11ea-8552-007ad43153de.png)
 
 Then you can log in
 
-![s1](https://user-images.githubusercontent.com/34987997/71482186-9221fa00-2801-11ea-8552-007ad43153de.png)
+![s2](https://user-images.githubusercontent.com/34987997/71482170-7cacd000-2801-11ea-9479-bd7cda105539.png)
 
-Under settings you can change the user properties such as password, avatar, contacts and groups.  
+Under settings you can change the user properties (password, email, avatar), contacts and groups.  
 
 ![s4](https://user-images.githubusercontent.com/34987997/71482831-f2666b00-2804-11ea-84fb-452d432f9e74.png)
 
 ![s5](https://user-images.githubusercontent.com/34987997/71482221-c0073e80-2801-11ea-84b0-9645c8d92647.png)
 
 ![s6](https://user-images.githubusercontent.com/34987997/71482231-cac1d380-2801-11ea-965c-4b6b4a44a216.png)
-
-## User, groups and contacts setting
-
 
 ## Used libraries
 
