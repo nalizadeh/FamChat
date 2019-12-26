@@ -114,16 +114,15 @@ Depending on how the server is started, you can call the FamChat secure or unenc
 
 ![fc011](https://user-images.githubusercontent.com/34987997/71482609-d57d6800-2803-11ea-8204-d6749ce42581.png)
 
-The first thing to do is register a user. 
+The first thing to do is register a user
 
 ![s0](https://user-images.githubusercontent.com/34987997/71482716-50468300-2804-11ea-8b2c-5fc13f7878fe.png)
+
 ![s2](https://user-images.githubusercontent.com/34987997/71482170-7cacd000-2801-11ea-9479-bd7cda105539.png)
 
-Then you can log in. 
+Then you can log in
 
 ![s1](https://user-images.githubusercontent.com/34987997/71482186-9221fa00-2801-11ea-8552-007ad43153de.png)
-
-![s4](https://user-images.githubusercontent.com/34987997/71482831-f2666b00-2804-11ea-84fb-452d432f9e74.png)
 
 Under settings you can change the user properties such as password, avatar, contacts and groups.  
 
