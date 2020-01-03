@@ -1,5 +1,5 @@
 
-![fc-logo](https://user-images.githubusercontent.com/34987997/71720719-f278f300-2e22-11ea-8863-1eacc34551fe.png)
+![fc-logo](https://user-images.githubusercontent.com/34987997/71720986-c447e300-2e23-11ea-8092-e8c6fa5a8e72.png)
 
 ![famchat](https://user-images.githubusercontent.com/34987997/71326782-0e65c600-2500-11ea-9c27-8ee2a03d24f7.png)
 
