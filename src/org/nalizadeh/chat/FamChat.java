@@ -379,11 +379,12 @@ public class FamChat extends JFrame {
 		btDirWS.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JFileChooser chooser = new JFileChooser(btDirWS.getText());
+					JFileChooser chooser = new JFileChooser(tfRootWS.getText());
 					chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 					int returnVal = chooser.showOpenDialog(self);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						rootWS = chooser.getSelectedFile().getAbsolutePath();
+						tfRootWS.setText(rootWS);
 					}
 				}
 			}
@@ -434,11 +435,12 @@ public class FamChat extends JFrame {
 		btDirCS.addActionListener(
 			new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					JFileChooser chooser = new JFileChooser(btDirCS.getText());
+					JFileChooser chooser = new JFileChooser(tfRootCS.getText());
 					chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 					int returnVal = chooser.showOpenDialog(self);
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						rootCS = chooser.getSelectedFile().getAbsolutePath();
+						tfRootCS.setText(rootCS);
 					}
 				}
 			}
